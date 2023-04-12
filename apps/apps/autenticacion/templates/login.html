@@ -2,7 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Autenticación</title>
+    <style>
+        .btn-custom {
+            background-color: #343a40;
+            color: #ffffff;
+            border: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .btn-custom:hover {
+            background-color: #b3b3b3;
+            color: #343a40;
+        }
+    </style>
 </head>
 <body>
 {% extends 'base.html' %}
@@ -12,12 +25,9 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+    <button type="submit" class="btn btn-custom">Iniciar sesión</button>
   </form>
   <p>¿Olvidaste tu contraseña? <a href="{% url 'password_reset' %}">Restablecer contraseña</a></p>
 {% endblock %}
-
-
-
 </body>
 </html>

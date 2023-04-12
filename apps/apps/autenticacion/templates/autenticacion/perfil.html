@@ -2,23 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Perfil</title>
+    <style>
+    .btn-custom {
+      background-color: #343a40;
+      border: none;
+      color: #ffffff;
+      padding: 16px 32px;
+      text-align: center;
+      font-size: 16px;
+      margin: 4px 2px;
+      opacity: 0.6;
+      transition: 0.3s;
+      display: inline-block;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn-custom:hover {opacity: 1}
+    </style>
 </head>
 <body>
 {% extends 'base.html' %}
-
 {% block content %}
   <h2>Perfil de usuario</h2>
+  {% if photo %}
+    <img src="{{ photo.url }}" alt="Foto de perfil" class="profile-image" style="max-width: 200px; max-height: 200px;">
+  {% else %}
+    <p>No se ha subido una foto de perfil.</p>
+  {% endif %}
   <p>Nombre: {{ request.user.first_name }}</p>
   <p>Apellido: {{ request.user.last_name }}</p>
   <p>Correo electrónico: {{ request.user.email }}</p>
-  {% if user.image %}
-    <img src="{{ image.url }}" alt="{{ user.username }}'s profile picture">
-  {% else %}
-    <p>No hay imagen de perfil disponible.</p>
-  {% endif %}
-  <a href="{% url 'update_profile' %}" class="btn btn-primary">Editar perfil</a>
+  <a href="{% url 'update_profile' %}" class="btn-custom">Editar perfil</a>
 {% endblock %}
-
 </body>
 </html>
+
+
