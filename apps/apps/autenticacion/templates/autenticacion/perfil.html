@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Perfil de usuario</h2>
+  <p>Nombre: {{ request.user.first_name }}</p>
+  <p>Apellido: {{ request.user.last_name }}</p>
+  <p>Correo electrónico: {{ request.user.email }}</p>
+  {% if user.image %}
+    <img src="{{ image.url }}" alt="{{ user.username }}'s profile picture">
+  {% else %}
+    <p>No hay imagen de perfil disponible.</p>
+  {% endif %}
+  <a href="{% url 'update_profile' %}" class="btn btn-primary">Editar perfil</a>
+{% endblock %}
+
+</body>
+</html>

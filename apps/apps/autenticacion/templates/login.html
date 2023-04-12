@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Iniciar sesión</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+  </form>
+  <p>¿Olvidaste tu contraseña? <a href="{% url 'password_reset' %}">Restablecer contraseña</a></p>
+{% endblock %}
+
+
+
+</body>
+</html>
