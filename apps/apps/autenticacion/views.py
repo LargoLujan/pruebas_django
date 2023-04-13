@@ -1,9 +1,10 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UpdateProfileForm, CustomUserCreationForm
+from .utils import is_administrator, is_estructura, is_hr, is_estandar
 
 
 def registro(request):
@@ -27,7 +28,19 @@ def ingresar(request):
         if form.is_valid():
             login(request, form.get_user())
             messages.success(request, 'Inicio de sesión exitoso.')
-            return redirect('contenido')
+
+            # Verificar si el usuario pertenece al grupo de administradores
+            if request.user.groups.filter(name='admin').exists():
+                return redirect('administracion_panel')
+            elif request.user.groups.filter(name='staff').exists():
+                return redirect('estructura')
+            elif request.user.groups.filter(name='hr').exists():
+                return redirect('hr_panel')
+            elif request.user.groups.filter(name='estandar').exists():
+                return redirect('contenido')
+            else:
+                return redirect('sin_grupo')
+
         else:
             messages.error(request, 'Error en el inicio de sesión. Por favor, revisa tus credenciales.')
     else:
@@ -63,7 +76,6 @@ def update_profile(request):
     return render(request, 'autenticacion/update_profile.html', context)
 
 
-
 @login_required
 def perfil(request):
     user = request.user
@@ -72,3 +84,23 @@ def perfil(request):
         'photo': user.image,  # obtener la foto del usuario
     }
     return render(request, 'autenticacion/perfil.html', context)
+
+
+@user_passes_test(is_administrator)
+def administracion_panel(request):
+    return render(request, 'administracion_panel.html')
+
+
+@user_passes_test(is_estructura)
+def estructural(request):
+    return render(request, 'estructura.html')
+
+
+@user_passes_test(is_hr)
+def hr_panel(request):
+    return render(request, 'hr_panel.html')
+
+
+@user_passes_test(is_estandar)
+def estandar(request):
+    return render(request, 'estandar.html')
