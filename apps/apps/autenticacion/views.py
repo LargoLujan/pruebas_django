@@ -98,9 +98,9 @@ def estructura_panel(request):
 
 @user_passes_test(is_hr)
 def hr_panel(request):
-    return render(request, 'hr_panel.html')
+    return render(request, 'hr/hr_panel.html')
 
 
 @user_passes_test(is_estandar)
-def estandar(request):
-    return render(request, 'estandar.html')
+def estandar_panel(request):
+    return render(request, 'contenido.html')
