@@ -33,7 +33,7 @@ def ingresar(request):
             if request.user.groups.filter(name='admin').exists():
                 return redirect('administracion_panel')
             elif request.user.groups.filter(name='staff').exists():
-                return redirect('estructura')
+                return redirect('estructura_panel')
             elif request.user.groups.filter(name='hr').exists():
                 return redirect('hr_panel')
             elif request.user.groups.filter(name='estandar').exists():
@@ -88,12 +88,12 @@ def perfil(request):
 
 @user_passes_test(is_administrator)
 def administracion_panel(request):
-    return render(request, 'administracion_panel.html')
+    return render(request, 'admin/administracion_panel.html')
 
 
 @user_passes_test(is_estructura)
-def estructural(request):
-    return render(request, 'estructura.html')
+def estructura_panel(request):
+    return render(request, 'staff/estructura_panel.html')
 
 
 @user_passes_test(is_hr)

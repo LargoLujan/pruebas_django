@@ -9,7 +9,7 @@ urlpatterns = [
     path('perfil/editar/', views.update_profile, name='update_profile'),
     path('perfil/', views.perfil, name='perfil'),
     path('administracion_panel/', views.administracion_panel, name='administracion_panel'),
-    path('estructura/', views.administracion_panel, name='estructura'),
-    path('hr_panel/', views.administracion_panel, name='hr_panel'),
+    path('estructura_panel/', views.estructura_panel, name='estructura_panel'),
+    path('hr_panel/', views.hr_panel, name='hr_panel'),
     path('sin_grupo/', views.administracion_panel, name='sin_grupo'),
 ]
