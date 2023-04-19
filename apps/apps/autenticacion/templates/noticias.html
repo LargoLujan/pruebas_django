@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Contenido protegido</h2>
+<p>Bienvenido, {{ request.user.username }}.</p>
+{% endblock %}
+
+<div class="container">
+            <h1>Noticias</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Fecha de publicación</th>
+                        <th>Autor</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for noticia in noticias %}
+                        <tr>
+                            <td>{{ noticia.titulo }}</td>
+                            <td>{{ noticia.fecha_publicacion|date:"d/m/Y" }}</td>
+                            <td>{{ noticia.autor }}</td>
+                            <td>
+                                <a href="{% url 'editar_noticia' noticia.pk %}">Editar</a> |
+                                <a href="{% url 'eliminar_noticia' noticia.pk %}">Eliminar</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">No hay noticias disponibles.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+</body>
+</html>

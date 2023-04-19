@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import User
-from .models import CustomUser
+from .models import CustomUser, Noticia
 
 
 class UpdateProfileForm(UserChangeForm):
@@ -27,3 +27,10 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = ('username', 'first_name', 'last_name', 'email', 'image', 'password1', 'password2')
+
+
+class NoticiaForm(forms.ModelForm):
+    class Meta:
+        model = Noticia
+        fields = ['titulo', 'contenido', 'fecha_publicacion', 'autor', 'imagen', 'enlace']
+        exclude = ['fecha_publicacion']  # Excluye el campo fecha_publicación

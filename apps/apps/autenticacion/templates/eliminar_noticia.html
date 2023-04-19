@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Eliminar noticia</h2>
+    <p>¿Estás seguro de que quieres eliminar la noticia "{{ noticia.titulo }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'listar_noticias' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+{% endblock %}
+
+</body>
+</html>

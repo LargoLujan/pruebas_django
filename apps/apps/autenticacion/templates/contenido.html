@@ -10,6 +10,14 @@
 {% block content %}
 <h2>Contenido protegido</h2>
 <p>Bienvenido, {{ request.user.username }}.</p>
+
+<!-- ... -->
+
+<div class="container">
+    <h1>Noticias</h1>
+    <a href="{% url 'crear_noticia' %}" class="btn btn-primary">Crear noticia</a>
+    <!-- ... -->
+</div>
 {% endblock %}
 
 
