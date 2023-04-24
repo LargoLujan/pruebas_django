@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.urls import reverse
 
 from .forms import UpdateProfileForm, CustomUserCreationForm, NoticiaForm
-from .models import Noticia
+from .models import Noticia, CalendarioLaboral
 from .utils import is_administrator, is_estructura, is_hr, is_estandar
 
 
@@ -40,7 +40,7 @@ def ingresar(request):
             elif request.user.groups.filter(name='hr').exists():
                 return redirect('hr_panel')
             elif request.user.groups.filter(name='estandar').exists():
-                return redirect('noticias')
+                return redirect('contenido')
             else:
                 return redirect('sin_grupo')
 
@@ -59,7 +59,7 @@ def contenido(request):
 
 def cerrar_sesion(request):
     logout(request)
-    return redirect('login')
+    return redirect('login.html')
 
 
 @login_required
@@ -110,7 +110,7 @@ def estandar_panel(request):
 
 
 # Vista de lista de noticias
-@user_passes_test(is_estructura)
+@user_passes_test(is_estandar)
 def noticias(request):
     noticias = Noticia.objects.all()
     context = {'noticias': noticias}
@@ -155,3 +155,9 @@ def eliminar_noticia(request, noticia_id):
         noticia.delete()
         return redirect('noticias')
     return render(request, 'eliminar_noticia.html', {'noticia': noticia})
+
+
+def calendario(request):
+    calendario_laboral = CalendarioLaboral.objects.all()
+    context = {'calendario_laboral': calendario_laboral}
+    return render(request, 'calendario.html', context)

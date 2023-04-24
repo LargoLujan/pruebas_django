@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Noticias</title>
 </head>
 <body>
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Contenido protegido</h2>
+<h2>Portal Corporativo</h2>
 <p>Bienvenido, {{ request.user.username }}.</p>
-{% endblock %}
+
 
 <div class="container">
             <h1>Noticias</h1>
@@ -29,10 +29,6 @@
                             <td>{{ noticia.titulo }}</td>
                             <td>{{ noticia.fecha_publicacion|date:"d/m/Y" }}</td>
                             <td>{{ noticia.autor }}</td>
-                            <td>
-                                <a href="{% url 'editar_noticia' noticia.pk %}">Editar</a> |
-                                <a href="{% url 'eliminar_noticia' noticia.pk %}">Eliminar</a>
-                            </td>
                         </tr>
                     {% empty %}
                         <tr>
@@ -42,5 +38,6 @@
                 </tbody>
             </table>
         </div>
+{% endblock %}
 </body>
 </html>
