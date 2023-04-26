@@ -5,6 +5,39 @@
     <title>Title</title>
 </head>
 <body>
+{% extends 'base_hr.html' %}
+
+{% block content %}
+    <h2>Planificación</h2>
+    <a href="{% url 'evento_nuevo' %}" class="btn btn-primary">Agregar evento</a>
+
+    <h3>Eventos</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>Fecha de inicio</th>
+                <th>Fecha de fin</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for evento in object_list %}
+            <tr>
+                <td>{{ evento.titulo }}</td>
+                <td>{{ evento.tipo }}</td>
+                <td>{{ evento.fecha_inicio }}</td>
+                <td>{{ evento.fecha_fin }}</td>
+                <td>
+                    <a href="{% url 'evento_update' evento.pk %}" class="btn btn-secondary">Editar</a>
+                    <a href="{% url 'evento_eliminar' evento.pk %}" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
 
 </body>
 </html>

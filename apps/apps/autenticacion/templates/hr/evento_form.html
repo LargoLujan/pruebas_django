@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% extends "base_hr.html" %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Crear evento</h2>
+        <form method="POST">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary">Crear evento</button>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <h2>Calendario laboral</h2>
+        <div id="calendar"></div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script>
+    $(document).ready(function() {
+      // Obtener la lista de eventos del calendario
+      let events = [
+        {% for evento in eventos %}
+          {
+            title: '{{ evento.titulo }}',
+            start: '{{ evento.fecha_inicio|date:"c" }}',
+            {% if evento.fecha_fin %}
+              end: '{{ evento.fecha_fin|date:"c" }}',
+            {% endif %}
+            color: '{{ evento.color }}'
+          },
+        {% endfor %}
+      ];
+
+      // Inicializar el calendario
+      let calendar = $('#calendar').fullCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+        events: events
+      });
+
+      // Agregar el nuevo evento a la lista de eventos del calendario
+      function addEventToCalendar(event) {
+        let events = calendar.fullCalendar('clientEvents');
+        events.push(event);
+        calendar.fullCalendar('removeEvents');
+        calendar.fullCalendar('addEventSource', events);
+      }
+
+      // Escuchar el evento "submit" del formulario y enviar los datos del nuevo evento al servidor
+      $('form').submit(function(event) {
+        event.preventDefault();
+        $.ajax({
+          url: '{% url "evento_nuevo" %}',
+          type: 'POST',
+          data: $('form').serialize(),
+          success: function(response) {
+            let newEvent = {
+              title: response.titulo,
+              start: response.fecha_inicio,
+              {% if response.fecha_fin %}
+                end: response.fecha_fin,
+              {% endif %}
+              color: response.color
+            };
+            addEventToCalendar(newEvent);
+            $('form')[0].reset();
+            alert('El evento ha sido creado con éxito.');
+          },
+          error: function(error) {
+            alert('Ha ocurrido un error al crear el evento. Por favor, inténtalo de nuevo.');
+          }
+        });
+      });
+    });
+  </script>
+{% endblock %}
+</body>
+</html>

@@ -21,43 +21,29 @@
 {% block scripts %}
 <script>
     $(document).ready(function() {
-        let events = [
-            // Aquí se puede añadir la información de horarios diarios, días festivos, libranzas y vacaciones
-            // utilizando el formato de eventos de FullCalendar
-            // https://fullcalendar.io/docs/event-object
-            {
-                title: 'Vacaciones',
-                start: '2023-05-01',
-                end: '2023-05-07',
-                color: '#28a745' // Color verde
-            },
-            {
-                title: 'Día festivo',
-                start: '2023-05-15',
-                color: '#ffc107' // Color amarillo
-            },
-            {
-                title: 'Horario laboral',
-                start: '2023-05-20T09:00:00',
-                end: '2023-05-20T17:00:00',
-                color: '#007bff' // Color azul
-            },
-            {
-                title: 'Libranza',
-                start: '2023-05-25',
-                color: '#dc3545' // Color rojo
-            }
-        ];
+    let events = [
+        {% for evento in eventos %}
+        {
+            title: '{{ evento.titulo }}',
+            start: '{{ evento.fecha_inicio|date:"c" }}',
+            {% if evento.fecha_fin %}
+            end: '{{ evento.fecha_fin|date:"c" }}',
+            {% endif %}
+            color: '{{ evento.color }}'
+        },
+        {% endfor %}
+    ];
 
-        $('#calendar').fullCalendar({
-            header: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'month,agendaWeek,agendaDay'
-            },
-            events: events
-        });
+    $('#calendar').fullCalendar({
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+        },
+        events: events
     });
+});
+
 </script>
 {% endblock %}
 

@@ -35,3 +35,26 @@ class CalendarioLaboral(models.Model):
 
     def __str__(self):
         return f"{self.usuario} - {self.fecha}"
+
+
+class Evento(models.Model):
+    TIPOS = (
+        ('vacaciones', 'Vacaciones'),
+        ('festivo', 'Día festivo'),
+        ('festivo_trabaja', 'Día festivo trabaja'),
+        ('horario', 'Horario laboral'),
+        ('libranza', 'Libranza'),
+        ('baja_medica', 'Baja médica'),
+        ('baja_maternal', 'Baja maternal/Paternal'),
+        ('ausencia', 'Ausencia'),
+
+    )
+
+    titulo = models.CharField(max_length=200)
+    tipo = models.CharField(max_length=15, choices=TIPOS)
+    fecha_inicio = models.DateTimeField()
+    fecha_fin = models.DateTimeField(null=True, blank=True)
+    color = models.CharField(max_length=7)
+
+    def __str__(self):
+        return self.titulo

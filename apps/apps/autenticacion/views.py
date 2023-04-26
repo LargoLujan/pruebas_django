@@ -1,12 +1,13 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.urls import reverse
-
-from .forms import UpdateProfileForm, CustomUserCreationForm, NoticiaForm
-from .models import Noticia, CalendarioLaboral
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, TemplateView
+from .forms import UpdateProfileForm, CustomUserCreationForm, NoticiaForm, EventoForm
+from .models import Noticia, CalendarioLaboral, Evento
 from .utils import is_administrator, is_estructura, is_hr, is_estandar
 
 
@@ -59,7 +60,7 @@ def contenido(request):
 
 def cerrar_sesion(request):
     logout(request)
-    return redirect('login.html')
+    return redirect('login')
 
 
 @login_required
@@ -158,6 +159,86 @@ def eliminar_noticia(request, noticia_id):
 
 
 def calendario(request):
-    calendario_laboral = CalendarioLaboral.objects.all()
-    context = {'calendario_laboral': calendario_laboral}
+    eventos = Evento.objects.all()
+
+    events = []
+    for evento in eventos:
+        event = {
+            'title': evento.titulo,
+            'start': evento.fecha_inicio.isoformat(),
+            'color': evento.color
+        }
+        if evento.fecha_fin:
+            event['end'] = evento.fecha_fin.isoformat()
+
+        events.append(event)
+
+    context = {'events': events}
     return render(request, 'calendario.html', context)
+
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='hr').exists())
+def evento_form(request):
+    if request.method == 'POST':
+        form = EventoForm(request.POST)
+        if form.is_valid():
+            evento = form.save(commit=False)
+            evento.save()
+            messages.success(request, 'El evento ha sido creado con éxito.')
+            return redirect('hr_panel')
+    else:
+        form = EventoForm()
+    return render(request, 'hr/evento_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='hr').exists())
+def evento_create(request):
+    if request.method == 'POST':
+        form = NoticiaForm(request.POST, request.FILES)
+        if form.is_valid():
+            evento = form.save(commit=False)
+            evento.autor = request.user
+            evento.save()
+            return redirect('hr_panel')
+    else:
+        form = NoticiaForm()
+
+    context = {'form': form}
+    return render(request, 'hr/evento_form.html', context)
+
+
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='hr').exists())
+def evento_update(request, pk):
+    evento = get_object_or_404(Evento, pk=pk)
+    if request.method == 'POST':
+        form = NoticiaForm(request.POST, instance=evento)
+        if form.is_valid():
+            form.save()
+            return redirect('hr_panel')
+    else:
+        form = NoticiaForm(instance=evento)
+    context = {'form': form}
+    return render(request, 'hr/evento_form.html', context)
+
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='hr').exists())
+def evento_delete(request, pk):
+    evento = get_object_or_404(Evento, pk=pk)
+    if request.method == 'POST':
+        evento.delete()
+        return redirect('hr_panel')
+    context = {'evento': evento}
+    return render(request, 'hr/evento_confirm_delete.html', context)
+
+
+
+
+@login_required
+@user_passes_test(is_hr)
+def planificacion(request):
+    return render(request, 'hr/planificacion.html')

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import User
-from .models import CustomUser, Noticia
+from .models import CustomUser, Noticia, Evento
 
 
 class UpdateProfileForm(UserChangeForm):
@@ -32,5 +32,21 @@ class CustomUserCreationForm(UserCreationForm):
 class NoticiaForm(forms.ModelForm):
     class Meta:
         model = Noticia
-        fields = ['titulo', 'contenido', 'fecha_publicacion', 'autor', 'imagen', 'enlace']
+        fields = ['titulo', 'contenido', 'autor', 'imagen', 'enlace']
         exclude = ['fecha_publicacion']  # Excluye el campo fecha_publicación
+
+
+class AgregarEventoForm(forms.ModelForm):
+    class Meta:
+        model = Evento
+        fields = ['titulo', 'tipo', 'fecha_inicio', 'fecha_fin', 'color']
+
+
+class EventoForm(forms.ModelForm):
+    class Meta:
+        model = Evento
+        fields = ['titulo', 'fecha_inicio', 'fecha_fin', 'color']
+        widgets = {
+            'fecha_inicio': forms.TextInput(attrs={'type': 'datetime-local'}),
+            'fecha_fin': forms.TextInput(attrs={'type': 'datetime-local'}),
+        }

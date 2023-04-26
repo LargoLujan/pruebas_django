@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>¿Estás seguro de que deseas eliminar el evento "{{ object.titulo }}"?</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'eliminar_evento' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+{% endblock %}
+
+</body>
+</html>
