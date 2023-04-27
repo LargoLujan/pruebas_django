@@ -2,7 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import User
 from .models import CustomUser, Noticia, Evento
-
+from .helpers import get_users_with_group
+from django.forms.widgets import SelectMultiple
 
 
 class UpdateProfileForm(UserChangeForm):
@@ -43,6 +44,18 @@ class AgregarEventoForm(forms.ModelForm):
         fields = ['titulo', 'tipo', 'fecha_inicio', 'fecha_fin', 'color']
 
 
+class GroupSelectMultiple(SelectMultiple):
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
+        option = super().create_option(name, value, label, selected, index, subindex=subindex, attrs=attrs)
+        option['attrs']['class'] = 'option-group'
+        return option
+
+
+class CustomModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.username} ({obj.groups.first().name})" if obj.groups.exists() else obj.username
+
+
 class EventoForm(forms.ModelForm):
     COLOR_CHOICES = [
         ('#FF0000', 'Rojo'),
@@ -54,9 +67,9 @@ class EventoForm(forms.ModelForm):
 
     color = forms.ChoiceField(choices=COLOR_CHOICES, widget=forms.Select)
 
-    usuarios_autorizados = forms.ModelMultipleChoiceField(
-        queryset=CustomUser.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
+    usuarios_autorizados = CustomModelMultipleChoiceField(
+        queryset=get_users_with_group(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
         required=False
     )
 

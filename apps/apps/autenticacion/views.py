@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, TemplateView
 from .forms import UpdateProfileForm, CustomUserCreationForm, NoticiaForm, EventoForm
-from .models import Noticia, CalendarioLaboral, Evento
+from .models import Noticia, CalendarioLaboral, Evento, CustomUser
 from .utils import is_administrator, is_estructura, is_hr, is_estandar
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -238,3 +238,6 @@ def evento_delete(request, pk):
 @user_passes_test(is_hr)
 def planificacion(request):
     return render(request, 'hr/planificacion.html')
+
+
+
