@@ -160,7 +160,9 @@ def eliminar_noticia(request, noticia_id):
 
 
 def calendario(request):
-    eventos = Evento.objects.all()
+    if not request.user.is_authenticated:
+        return redirect('login')
+    eventos = Evento.objects.filter(usuarios_autorizados=request.user) if request.user.groups.filter(name='hr').exists() else Evento.objects.all()
     context = {'eventos': eventos}
     return render(request, 'calendario.html', context)
 
@@ -172,7 +174,9 @@ def evento_form(request):
     if request.method == 'POST':
         form = EventoForm(request.POST)
         if form.is_valid():
-            evento = form.save()
+            evento = form.save(commit=False)
+            evento.save()
+            form.save_m2m
             data = {
                 'titulo': evento.titulo,
                 'fecha_inicio': evento.fecha_inicio.isoformat(),

@@ -54,9 +54,15 @@ class EventoForm(forms.ModelForm):
 
     color = forms.ChoiceField(choices=COLOR_CHOICES, widget=forms.Select)
 
+    usuarios_autorizados = forms.ModelMultipleChoiceField(
+        queryset=CustomUser.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
     class Meta:
         model = Evento
-        fields = ['titulo', 'fecha_inicio', 'fecha_fin', 'color']
+        fields = ['titulo', 'fecha_inicio', 'fecha_fin', 'color', 'usuarios_autorizados']
         widgets = {
             'fecha_inicio': forms.TextInput(attrs={'type': 'datetime-local'}),
             'fecha_fin': forms.TextInput(attrs={'type': 'datetime-local'}),

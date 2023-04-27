@@ -55,6 +55,7 @@ class Evento(models.Model):
     fecha_inicio = models.DateTimeField()
     fecha_fin = models.DateTimeField(null=True, blank=True)
     color = models.CharField(max_length=7)
+    usuarios_autorizados = models.ManyToManyField(CustomUser, blank=True, related_name='eventos_autorizados')
 
     def __str__(self):
         return self.titulo
