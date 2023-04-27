@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .models import CustomUser, Noticia, Evento
 
 
+
 class UpdateProfileForm(UserChangeForm):
     email = forms.EmailField(required=True)
     image = forms.ImageField(required=False, help_text='Opcional. Sube una nueva imagen de perfil.')
@@ -43,6 +44,16 @@ class AgregarEventoForm(forms.ModelForm):
 
 
 class EventoForm(forms.ModelForm):
+    COLOR_CHOICES = [
+        ('#FF0000', 'Rojo'),
+        ('#00FF00', 'Verde'),
+        ('#0000FF', 'Azul'),
+        ('#FFFF00', 'Amarillo'),
+        ('#FFA500', 'Naranja'),
+    ]
+
+    color = forms.ChoiceField(choices=COLOR_CHOICES, widget=forms.Select)
+
     class Meta:
         model = Evento
         fields = ['titulo', 'fecha_inicio', 'fecha_fin', 'color']

@@ -9,7 +9,8 @@ from django.views.generic import CreateView, UpdateView, DeleteView, ListView, T
 from .forms import UpdateProfileForm, CustomUserCreationForm, NoticiaForm, EventoForm
 from .models import Noticia, CalendarioLaboral, Evento
 from .utils import is_administrator, is_estructura, is_hr, is_estandar
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 def registro(request):
     if request.method == 'POST':
@@ -160,33 +161,27 @@ def eliminar_noticia(request, noticia_id):
 
 def calendario(request):
     eventos = Evento.objects.all()
-
-    events = []
-    for evento in eventos:
-        event = {
-            'title': evento.titulo,
-            'start': evento.fecha_inicio.isoformat(),
-            'color': evento.color
-        }
-        if evento.fecha_fin:
-            event['end'] = evento.fecha_fin.isoformat()
-
-        events.append(event)
-
-    context = {'events': events}
+    context = {'eventos': eventos}
     return render(request, 'calendario.html', context)
 
 
+@csrf_exempt
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='hr').exists())
 def evento_form(request):
     if request.method == 'POST':
         form = EventoForm(request.POST)
         if form.is_valid():
-            evento = form.save(commit=False)
-            evento.save()
-            messages.success(request, 'El evento ha sido creado con éxito.')
-            return redirect('hr_panel')
+            evento = form.save()
+            data = {
+                'titulo': evento.titulo,
+                'fecha_inicio': evento.fecha_inicio.isoformat(),
+                'fecha_fin': evento.fecha_fin.isoformat() if evento.fecha_fin else None,
+                'color': evento.color,
+            }
+            return JsonResponse(data)
+        else:
+            return JsonResponse({'error': 'Ha ocurrido un error al crear el evento. Por favor, inténtalo de nuevo.'}, status=400)
     else:
         form = EventoForm()
     return render(request, 'hr/evento_form.html', {'form': form})
@@ -207,7 +202,6 @@ def evento_create(request):
 
     context = {'form': form}
     return render(request, 'hr/evento_form.html', context)
-
 
 
 @login_required
@@ -234,8 +228,6 @@ def evento_delete(request, pk):
         return redirect('hr_panel')
     context = {'evento': evento}
     return render(request, 'hr/evento_confirm_delete.html', context)
-
-
 
 
 @login_required
